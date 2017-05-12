@@ -44,10 +44,11 @@ function NoteBox(key, onClick) {
     }
 
     this.playAll = function playAll() {
+
         SEQUENCE.forEach(function (key, i) {
         	setTimeout(key.play, i * NOTE_DURATION)
         })
-        SEQUENCE.empty();
+        SEQUENCE = [];
     }
 
     this.addKey = function () {
