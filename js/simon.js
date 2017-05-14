@@ -3,6 +3,9 @@ var NOTE_DURATION = 1000;
 var SEQUENCE = [];
 var delay = 2500;
 var delayTimer;
+var lvl = 0;
+var i = 0;
+var sequence = true;
 
 // NoteBox
 //
@@ -22,6 +25,7 @@ function NoteBox(key, onClick) {
     // Ensures that consequent plays won't prematurely remove the active class.
     var playing = 0;
 
+    enabled;
     this.key = key;
     this.onClick = onClick || function () {
         };
@@ -43,22 +47,20 @@ function NoteBox(key, onClick) {
         }, NOTE_DURATION)
     }
 
-    this.playAll = function playAll() {
-
-        SEQUENCE.forEach(function (key, i) {
-        	setTimeout(key.play, i * NOTE_DURATION)
-        })
-        SEQUENCE = [];
-    }
-
-    this.addKey = function () {
-        if (delayTimer != null) {
-            clearTimeout(delayTimer);
-        }
-        SEQUENCE.push(this)
-        delayTimer = setTimeout(this.playAll, delay);
+    this.checkKeys = function () {
+            if (this.key != SEQUENCE[i].key) {
+                alert('You Lost :(')
+                SEQUENCE = [];
+                lvl = 0;
+                i = 0;
+                sequence = true;
+                    generateKeys();
+            } else {
+                console.log('Correct!')
+                this.play();
+                i++;
+            }
     }.bind(this)
-
 
 
 
@@ -76,9 +78,16 @@ function NoteBox(key, onClick) {
 
     // Call this NoteBox's clickHandler and play the note.
     this.clickHandler = function () {
-        if (!enabled) return;
+        if (sequence) return;
         this.onClick(this.key)
-        this.addKey()
+        this.checkKeys();
+        if (i == lvl) {
+            sequence = true;
+            setTimeout(function () {
+                generateKeys();
+            }, 2000);
+            i = 0;
+        }
     }.bind(this)
 
     boxEl.addEventListener('mousedown', this.clickHandler);
@@ -92,10 +101,33 @@ function NoteBox(key, onClick) {
 var notes = {};
 
 KEYS.forEach(function (key, i) {
-	notes[key] = new NoteBox(key);
-    //setTimeout(notes[key].play.bind(null, key), i * NOTE_DURATION);
+    KEYS[i] = new NoteBox(key);
 });
 
-// KEYS.concat(KEYS.slice().reverse()).forEach(function(key, i) {
-// 	setTimeout(notes[key].play.bind(null, key), i * NOTE_DURATION);
-// });
+
+function playSequence() {
+    SEQUENCE.forEach(function (key, i) {
+        setTimeout(function () {sequence = false} , NOTE_DURATION * SEQUENCE.length)
+    setTimeout(SEQUENCE[i].play.bind(null, key), i * NOTE_DURATION);
+    });
+}
+
+function generateKeys() {
+    var random = Math.floor(Math.random()*4)
+    SEQUENCE.push(KEYS[random])
+    lvl++;
+    document.getElementById("level").innerHTML = "Your Level: " + lvl.toString();
+    playSequence()
+}
+
+generateKeys()
+
+
+
+function wait() {
+    
+}
+
+
+
+

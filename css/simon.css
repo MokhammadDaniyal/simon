@@ -3,6 +3,12 @@ html, body {
   height: 100%;
 }
 
+h1 {
+    top: 20px;
+    color: aqua;
+}
+
+
 /* Container for note boxes */
 #simon {
   display: flex;
